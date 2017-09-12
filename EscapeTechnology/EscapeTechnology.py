@@ -23,7 +23,6 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
     def __init__(self):
         self.endpoint = None
         self.token = None
-        self.disable_ssl_certificate_validation = False
 
         self.VerifyAccessCallback += self.VerifyAccess
         self.AvailableHardwareTypesCallback += self.GetAvailableSizes
