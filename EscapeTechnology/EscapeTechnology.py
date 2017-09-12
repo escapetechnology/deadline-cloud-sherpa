@@ -1,0 +1,444 @@
+import traceback
+import json
+import sys
+import urllib
+import random
+import string
+
+import httplib2
+
+from Deadline.Cloud import *
+from Deadline.Scripting import *
+from FranticX import Environment2
+from System.IO import *
+from System import *
+
+def GetCloudPluginWrapper():
+    return EscapeTechnologyConsolePlugin()
+
+def CleanupCloudPlugin(cloudPlugin):
+    cloudPlugin.Cleanup()
+
+class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
+    def __init__(self):
+        self.endpoint = None
+        self.token = None
+        self.disable_ssl_certificate_validation = False
+
+        self.VerifyAccessCallback += self.VerifyAccess
+        self.AvailableHardwareTypesCallback += self.GetAvailableSizes
+        self.AvailableOSImagesCallback += self.GetAvailableImages
+        self.GetActiveInstancesCallback += self.GetInstances
+        self.CreateInstancesCallback += self.CreateInstances
+        self.TerminateInstancesCallback += self.TerminateInstances
+        self.CloneInstanceCallback += self.CloneInstance
+        self.RebootInstancesCallback += self.RebootInstances
+        self.StopInstancesCallback += self.StopInstances
+        self.StartInstancesCallback += self.StartInstances
+
+    def Cleanup(self):
+        del self.VerifyAccessCallback
+        del self.AvailableHardwareTypesCallback
+        del self.AvailableOSImagesCallback
+        del self.GetActiveInstancesCallback
+        del self.CreateInstancesCallback
+        del self.TerminateInstancesCallback
+        del self.CloneInstanceCallback
+        del self.RebootInstancesCallback
+        del self.StopInstancesCallback
+        del self.StartInstancesCallback
+
+    def RefreshToken(self):
+        if self.token == None:
+            key = self.GetConfigEntryWithDefault("APIKey", "")
+
+            if len(key) <= 0:
+                raise Exception("Please enter your Escape Technology Console API key.")
+
+            secret = self.GetConfigEntryWithDefault("APISecret", "")
+
+            if len(secret) <= 0:
+                raise Exception("Please enter your Escape Technology Console API secret.")
+
+            endpoint = self.GetConfigEntryWithDefault("APIEndpoint", "")
+
+            if len(endpoint) <= 0:
+                raise Exception("Please enter the Escape Technology Console API endpoint.")
+
+            self.endpoint = endpoint
+
+            try:
+                http = httplib2.Http()
+
+                headers = {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+
+                body = {
+                    "_username": key,
+                    "_password": secret
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/login",
+                    method="POST",
+                    headers=headers,
+                    body=urllib.urlencode(body)
+                )
+
+                if response["status"] not in ["200", "201"]:
+                    raise Exception(
+                        "Problems getting a token. %s %s" % (response["status"], response)
+                    )
+
+                data = json.loads(response_body)
+                self.token = data["token"]
+            except:
+                self.token = None
+
+    def VerifyAccess(self):
+        self.RefreshToken()
+
+        ok = None
+
+        if self.token != None:
+            ok = True
+        else:
+            ok = False
+            raise Exception("Error: invalid Escape Technology Console credentials. " \
+                "Please ensure the correct API key and API secret have been entered.")
+
+        return ok
+
+    def GetAvailableSizes(self):
+        self.RefreshToken()
+
+        sizes = []
+
+        try:
+            if self.token != None:
+                projectId = self.GetConfigEntryWithDefault("ProjectId", "")
+
+                if len(projectId) <= 0:
+                    raise Exception("Please enter the Escape Technology Console project ID.")
+
+                http = httplib2.Http()
+
+                headers = {
+                    "Authorization": "Bearer "+self.token
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/projects/"+projectId,
+                    method="GET",
+                    headers=headers
+                )
+
+                data = json.loads(response_body)
+
+                if response["status"] != "200":
+                    raise Exception(
+                        "Problems getting project. %s %s" % (response["status"], response)
+                    )
+
+                serviceId = string.replace(data["service"], "/services/", "")
+
+                headers = {
+                    "Authorization": "Bearer "+self.token
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/sizes?service="+serviceId, # only return sizes related to project's service
+                    method="GET",
+                    headers=headers
+                )
+
+                data = json.loads(response_body)
+                members = data["hydra:member"]
+
+                if response["status"] != "200":
+                    raise Exception(
+                        "Problems getting list of sizes. %s %s" % (response["status"], response)
+                    )
+
+                for member in members:
+                    s = HardwareType()
+
+                    s.ID = member["id"]
+                    s.Name = member["name"]
+
+                    sizes.append(s)
+        except:
+            ClientUtils.LogText(traceback.format_exc())
+        finally:
+            return sizes
+
+    def GetAvailableImages(self):
+        self.RefreshToken()
+
+        images = []
+
+        try:
+            if self.token != None:
+                projectId = self.GetConfigEntryWithDefault("ProjectId", "")
+
+                if len(projectId) <= 0:
+                    raise Exception("Please enter the Escape Technology Console project ID.")
+
+                http = httplib2.Http()
+
+                headers = {
+                    "Authorization": "Bearer "+self.token
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/projects/"+projectId,
+                    method="GET",
+                    headers=headers
+                )
+
+                data = json.loads(response_body)
+
+                if response["status"] != "200":
+                    raise Exception(
+                        "Problems getting project. %s %s" % (response["status"], response)
+                    )
+
+                serviceId = string.replace(data["service"], "/services/", "")
+
+                headers = {
+                    "Authorization": "Bearer "+self.token
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/images?service="+serviceId, # only return images related to project's service
+                    method="GET",
+                    headers=headers
+                )
+
+                data = json.loads(response_body)
+                members = data["hydra:member"]
+
+                if response["status"] != "200":
+                    raise Exception(
+                        "Problems getting list of sizes. %s %s" % (response["status"], response)
+                    )
+
+                for member in members:
+                    i = OSImage()
+
+                    i.ID = member["id"]
+                    i.Description = member["name"]
+
+                    images.append(i)
+        except:
+            ClientUtils.LogText(traceback.format_exc())
+        finally:
+            return images
+
+    def GetInstances(self):
+        self.RefreshToken()
+
+        instances = []
+
+        try:
+            if self.token != None:
+                projectId = self.GetConfigEntryWithDefault("ProjectId", "")
+
+                if len(projectId) <= 0:
+                    raise Exception("Please enter the Escape Technology Console project ID.")
+
+                http = httplib2.Http()
+
+                headers = {
+                    "Authorization": "Bearer "+self.token
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/nodes?project="+projectId,
+                    method="GET",
+                    headers=headers
+                )
+
+                data = json.loads(response_body)
+                members = data["hydra:member"]
+
+                if response["status"] != "200":
+                    raise Exception(
+                        "Problems retrieving instances. %s %s" % (response["status"], response)
+                    )
+
+                for member in members:
+                    state = InstanceStatus.Unknown
+
+                    if member["marking"] == "created":
+                        state = InstanceStatus.Pending
+                    elif member["marking"] == "converging":
+                        state = InstanceStatus.Pending
+                    elif member["marking"] == "converged":
+                        state = InstanceStatus.Running
+                    elif member["marking"] == "destroying":
+                        state = InstanceStatus.Stopping
+                    elif member["marking"] == "destroyed":
+                        state = InstanceStatus.Terminated
+
+                    # @todo currently map state to running as marking is empty (not used) at the moment
+                    state = InstanceStatus.Running
+
+                    instance = CloudInstance()
+
+                    instance.ID = member["id"]
+                    instance.Name = member["name"]
+                    instance.Provider = "Escape Technology Console"
+                    instance.Status = state
+                    instance.Hostname = ""
+                    instance.PublicIP = ""
+                    instance.PrivateIP = ""
+                    instance.HardwareID = string.replace(member["size"], "/sizes/", "")
+                    instance.ImageID = string.replace(member["image"], "/images/", "")
+                    instance.Zone = ""
+
+                    instances.append(instance)
+        except:
+            ClientUtils.LogText(traceback.format_exc())
+        finally:
+            return instances
+
+    def CreateInstances(self, sizeId, imageId, count):
+        self.RefreshToken()
+
+        instances = []
+
+        try:
+            if self.token != None:
+                projectId = self.GetConfigEntryWithDefault("ProjectId", "")
+
+                if len(projectId) <= 0:
+                    raise Exception("Please enter the Escape Technology Console project ID.")
+
+                http = httplib2.Http()
+
+                headers = {
+                    "Authorization": "Bearer "+self.token
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/projects/"+projectId,
+                    method="GET",
+                    headers=headers
+                )
+
+                data = json.loads(response_body)
+
+                if response["status"] != "200":
+                    raise Exception(
+                        "Problems getting project. %s %s" % (response["status"], response)
+                    )
+
+                serviceId = string.replace(data["service"], "/services/", "")
+                regionId = string.replace(data["region"], "/regions/", "")
+
+                name = self.GetConfigEntryWithDefault("InstanceName", "DL-ETC")
+                r = lambda: random.randint(0, 255)
+
+                for i in range(count):
+                    # use a name with random 3byte hex value
+                    name = name + "-" + ("%02X%02X%02X" % (r(), r(), r()))
+                    name = name.lower()
+
+                    headers = {
+                        "Authorization": "Bearer "+self.token,
+                        "Content-Type": "application/ld+json",
+                        "Accept": "application/ld+json"
+                    }
+
+                    body = {
+                        "name": name,
+                        "description": "",
+                        "project": "/projects/"+projectId,
+                        "service": "/services/"+serviceId,
+                        "region": "/regions/"+regionId,
+                        "image": "/images/"+imageId,
+                        "size": "/sizes/"+sizeId,
+                    }
+
+                    (response, response_body) = http.request(
+                        self.endpoint+"/nodes",
+                        method="POST",
+                        headers=headers,
+                        body=json.dumps(body)
+                    )
+
+                    if response["status"] != "201":
+                        raise Exception(
+                            "Problems creating instances. %s %s" % (response["status"], response)
+                        )
+
+                    data = json.loads(response_body)
+
+                    i = CloudInstance()
+
+                    i.ID = data["id"]
+                    i.Name = data["name"]
+                    i.Hostname = ""
+                    i.HardwareID = string.replace(data["size"], "/sizes/", "")
+                    i.ImageID = string.replace(data["image"], "/images/", "")
+
+                    instances.append(i)
+        except:
+            ClientUtils.LogText(traceback.format_exc())
+        finally:
+            return instances
+
+    def TerminateInstances(self, instanceIds):
+        if instanceIds == None or len(instanceIds) == 0:
+            return []
+
+        self.RefreshToken()
+
+        count = len(instanceIds)
+        results = [False] * count
+
+        try:
+            projectId = self.GetConfigEntryWithDefault("ProjectId", "")
+
+            if len(projectId.strip()) <= 0:
+                raise Exception("Please enter the Escape Technology Console project ID.")
+
+            for i in range(0, count):
+                instanceId = instanceIds[i]
+
+                http = httplib2.Http()
+
+                headers = {
+                    "Authorization": "Bearer "+self.token
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/nodes/"+instanceId,
+                    method="DELETE",
+                    headers=headers
+                )
+
+                if response["status"] == "204": # "no content"
+                    results[i] = True
+                else:
+                    ClientUtils.LogText(
+                        "Problems deleting instance with ID: %s. %s %s" % (instanceId, response["status"], response)
+                    )
+        except:
+            ClientUtils.LogText(traceback.format_exc())
+        finally:
+            return results
+
+    def StopInstances(self, instanceIds):
+        raise Exception("Not implemented: StopInstances")
+
+    def StartInstances(self, instanceIds):
+        raise Exception("Not implemented: StartInstances")
+
+    def RebootInstances(self, instanceIds):
+        raise Exception("Not implemented: RebootInstances")
+
+    def CloneInstance(self, instance, count):
+        raise Exception("Not implemented: CloneInstance")

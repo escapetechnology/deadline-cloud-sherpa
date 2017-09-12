@@ -1,0 +1,45 @@
+[APIKey]
+Type=string
+Category=Authentication
+CategoryOrder=1
+Index=0
+Label=API key
+Default=
+Description=Your Escape Technology Console API key.
+
+[APISecret]
+Type=password
+Category=Authentication
+CategoryOrder=1
+Index=1
+Label=API secret
+Default=
+Description=Your Escape Technology Console API secret.
+
+[APIEndpoint]
+Type=string
+Category=Authentication
+CategoryOrder=1
+Index=3
+Label=API endpoint
+Default=https://console-api.escape-technology.com
+Description=The Escape Technology Console API endpoint, no need to touch this unless specifically instructed to do so by Escape Technology.
+
+[ProjectId]
+Type=string
+Category=Project
+CategoryOrder=2
+Index=0
+Label=Project ID
+Default=
+Description=The specific Project ID shown on the Escape Technology Console.
+
+[InstanceName]
+Type=string
+Validator=\w*
+Category=Project
+CategoryOrder=2
+Index=1
+Label=Instance name
+Default=DL-ETC
+Description=The name of the instances that will be created. FYI: The plugin will add some random hex values on the end to name each one of them uniquely.
