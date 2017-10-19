@@ -67,7 +67,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
             self.endpoint = endpoint
 
             try:
-                http = httplib2.Http()
+                http = httplib2.Http(disable_ssl_certificate_validation=True)
 
                 headers = {
                     "Content-Type": "application/x-www-form-urlencoded"
@@ -121,7 +121,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 if len(projectId) <= 0:
                     raise Exception("Please enter the Escape Technology Console project ID.")
 
-                http = httplib2.Http()
+                http = httplib2.Http(disable_ssl_certificate_validation=True)
 
                 headers = {
                     "Authorization": "Bearer "+self.token
@@ -184,7 +184,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 if len(projectId) <= 0:
                     raise Exception("Please enter the Escape Technology Console project ID.")
 
-                http = httplib2.Http()
+                http = httplib2.Http(disable_ssl_certificate_validation=True)
 
                 headers = {
                     "Authorization": "Bearer "+self.token
@@ -247,7 +247,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 if len(projectId) <= 0:
                     raise Exception("Please enter the Escape Technology Console project ID.")
 
-                http = httplib2.Http()
+                http = httplib2.Http(disable_ssl_certificate_validation=True)
 
                 headers = {
                     "Authorization": "Bearer "+self.token
@@ -315,7 +315,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 if len(projectId) <= 0:
                     raise Exception("Please enter the Escape Technology Console project ID.")
 
-                http = httplib2.Http()
+                http = httplib2.Http(disable_ssl_certificate_validation=True)
 
                 headers = {
                     "Authorization": "Bearer "+self.token
@@ -407,7 +407,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
             for i in range(0, count):
                 instanceId = instanceIds[i]
 
-                http = httplib2.Http()
+                http = httplib2.Http(disable_ssl_certificate_validation=True)
 
                 headers = {
                     "Authorization": "Bearer "+self.token
