@@ -337,11 +337,11 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 serviceId = string.replace(data["service"], "/services/", "")
                 regionId = string.replace(data["region"], "/regions/", "")
 
-                name = self.GetConfigEntryWithDefault("InstanceName", "DL-ETC")
                 r = lambda: random.randint(0, 255)
 
                 for i in range(count):
                     # use a name with random 3byte hex value
+                    name = self.GetConfigEntryWithDefault("InstanceName", "DL-ETC")
                     name = name + "-" + ("%02X%02X%02X" % (r(), r(), r()))
                     name = name.lower()
 
