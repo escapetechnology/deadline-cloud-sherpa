@@ -1,7 +1,6 @@
 import traceback
 import json
 import sys
-import urllib
 import random
 import string
 
@@ -70,19 +69,19 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 http = httplib2.Http(disable_ssl_certificate_validation=True)
 
                 headers = {
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/ld+json"
                 }
 
                 body = {
-                    "_username": key,
-                    "_password": secret
+                    "username": key,
+                    "password": secret
                 }
 
                 (response, response_body) = http.request(
                     self.endpoint+"/login",
                     method="POST",
                     headers=headers,
-                    body=urllib.urlencode(body)
+                    body=json.dumps(body)
                 )
 
                 if response["status"] not in ["200", "201"]:
