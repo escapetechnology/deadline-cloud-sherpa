@@ -430,10 +430,100 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
             return results
 
     def StopInstances(self, instanceIds):
-        raise Exception("Not implemented: StopInstances")
+        if instanceIds == None or len(instanceIds) == 0:
+            return []
+
+        self.RefreshToken()
+
+        count = len(instanceIds)
+        results = [False] * count
+
+        try:
+            projectId = self.GetConfigEntryWithDefault("ProjectId", "")
+
+            if len(projectId.strip()) <= 0:
+                raise Exception("Please enter the Escape Technology Console project ID.")
+
+            for i in range(0, count):
+                instanceId = instanceIds[i]
+
+                http = httplib2.Http(disable_ssl_certificate_validation=True)
+
+                headers = {
+                    "Authorization": "Bearer "+self.token,
+                    "Content-Type": "application/ld+json",
+                    "Accept": "application/ld+json"
+                }
+
+                body = {
+                    "marking": "stop"
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/nodes/"+instanceId,
+                    method="PUT",
+                    headers=headers,
+                    body=json.dumps(body)
+                )
+
+                if response["status"] == "200":
+                    results[i] = True
+                else:
+                    ClientUtils.LogText(
+                        "Problems stopping instance with ID: %s. %s %s" % (instanceId, response["status"], response)
+                    )
+        except:
+            ClientUtils.LogText(traceback.format_exc())
+        finally:
+            return results
 
     def StartInstances(self, instanceIds):
-        raise Exception("Not implemented: StartInstances")
+        if instanceIds == None or len(instanceIds) == 0:
+            return []
+
+        self.RefreshToken()
+
+        count = len(instanceIds)
+        results = [False] * count
+
+        try:
+            projectId = self.GetConfigEntryWithDefault("ProjectId", "")
+
+            if len(projectId.strip()) <= 0:
+                raise Exception("Please enter the Escape Technology Console project ID.")
+
+            for i in range(0, count):
+                instanceId = instanceIds[i]
+
+                http = httplib2.Http(disable_ssl_certificate_validation=True)
+
+                headers = {
+                    "Authorization": "Bearer "+self.token,
+                    "Content-Type": "application/ld+json",
+                    "Accept": "application/ld+json"
+                }
+
+                body = {
+                    "marking": "start"
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/nodes/"+instanceId,
+                    method="PUT",
+                    headers=headers,
+                    body=json.dumps(body)
+                )
+
+                if response["status"] == "200":
+                    results[i] = True
+                else:
+                    ClientUtils.LogText(
+                        "Problems starting instance with ID: %s. %s %s" % (instanceId, response["status"], response)
+                    )
+        except:
+            ClientUtils.LogText(traceback.format_exc())
+        finally:
+            return results
 
     def RebootInstances(self, instanceIds):
         raise Exception("Not implemented: RebootInstances")
