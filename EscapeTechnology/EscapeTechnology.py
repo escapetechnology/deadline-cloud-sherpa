@@ -269,19 +269,36 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 for member in members:
                     state = InstanceStatus.Unknown
 
-                    if member["marking"] == "created":
+                    if member["marking"] == "creating":
+                        state = InstanceStatus.Pending
+                    elif member["marking"] == "created":
                         state = InstanceStatus.Pending
                     elif member["marking"] == "converging":
                         state = InstanceStatus.Pending
                     elif member["marking"] == "converged":
                         state = InstanceStatus.Running
-                    elif member["marking"] == "destroying":
+                    elif member["marking"] == "verifying":
+                        state = InstanceStatus.Pending
+                    elif member["marking"] == "verified":
+                        state = InstanceStatus.Running
+                    elif member["marking"] == "starting":
+                        state = InstanceStatus.Rebooting
+                    elif member["marking"] == "started":
+                        state = InstanceStatus.Running
+                    elif member["marking"] == "stopping":
                         state = InstanceStatus.Stopping
+                    elif member["marking"] == "stopped":
+                        state = InstanceStatus.Stopped
+                    elif member["marking"] == "deleting":
+                        state = InstanceStatus.Pending
+                    elif member["marking"] == "deleted":
+                        state = InstanceStatus.Terminated
+                    elif member["marking"] == "destroying":
+                        state = InstanceStatus.Terminated
                     elif member["marking"] == "destroyed":
                         state = InstanceStatus.Terminated
-
-                    # @todo currently map state to running as marking is empty (not used) at the moment
-                    state = InstanceStatus.Running
+                    else
+                        state = InstanceStatus.Unknown
 
                     instance = CloudInstance()
 
