@@ -139,30 +139,17 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                         "Problems getting project. %s %s" % (response["status"], response)
                     )
 
-                # @FYI handle API v0.64.0 structural change: images and sizes sit underneath region instead of service
                 regionId = string.replace(data["region"], "/regions/", "")
 
                 headers = {
                     "Authorization": "Bearer "+self.token
                 }
 
-                # @FYI handle API v0.64.0 structural change: images and sizes sit underneath region instead of service
-                try:
-                    # @FYI to be phased out, < API v0.64.0
-                    serviceId = string.replace(data["service"], "/services/", "")
-
-                    (response, response_body) = http.request(
-                        self.endpoint+"/sizes?key=node&service="+serviceId, # only return sizes related to project's service
-                        method="GET",
-                        headers=headers
-                    )
-                except KeyError:
-                    # @FYI to be phased in, >= API v0.64.0
-                    (response, response_body) = http.request(
-                        self.endpoint+"/sizes?key=node&region="+regionId, # only return sizes related to project's region
-                        method="GET",
-                        headers=headers
-                    )
+                (response, response_body) = http.request(
+                    self.endpoint+"/sizes?key=node&region="+regionId, # only return sizes related to project's region
+                    method="GET",
+                    headers=headers
+                )
 
                 data = json.loads(response_body)
                 members = data["hydra:member"]
@@ -221,23 +208,11 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                     "Authorization": "Bearer "+self.token
                 }
 
-                # @FYI handle API v0.64.0 structural change: images and sizes sit underneath region instead of service
-                try:
-                    # @FYI to be phased out, < API v0.64.0
-                    serviceId = string.replace(data["service"], "/services/", "")
-
-                    (response, response_body) = http.request(
-                        self.endpoint+"/images?key=node&service="+serviceId, # only return images related to project's service
-                        method="GET",
-                        headers=headers
-                    )
-                except KeyError:
-                    # @FYI to be phased in, >= API v0.64.0
-                    (response, response_body) = http.request(
-                        self.endpoint+"/images?key=node&region="+regionId, # only return images related to project's region
-                        method="GET",
-                        headers=headers
-                    )
+                (response, response_body) = http.request(
+                    self.endpoint+"/images?key=node&region="+regionId, # only return images related to project's region
+                    method="GET",
+                    headers=headers
+                )
 
                 data = json.loads(response_body)
                 members = data["hydra:member"]
