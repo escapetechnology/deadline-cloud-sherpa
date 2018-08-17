@@ -139,7 +139,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                         "Problems getting project. %s %s" % (response["status"], response)
                     )
 
-                regionId = string.replace(data["region"], "/regions/", "")
+                regionId = string.replace(data["regions"][0], "/regions/", "")
 
                 headers = {
                     "Authorization": "Bearer "+self.token
@@ -202,7 +202,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                         "Problems getting project. %s %s" % (response["status"], response)
                     )
 
-                regionId = string.replace(data["region"], "/regions/", "")
+                regionId = string.replace(data["regions"][0], "/regions/", "")
 
                 headers = {
                     "Authorization": "Bearer "+self.token
