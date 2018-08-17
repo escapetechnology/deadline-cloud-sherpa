@@ -297,7 +297,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                         state = InstanceStatus.Terminated
                     elif member["marking"] == "destroyed":
                         state = InstanceStatus.Terminated
-                    else
+                    else:
                         state = InstanceStatus.Unknown
 
                     instance = CloudInstance()
