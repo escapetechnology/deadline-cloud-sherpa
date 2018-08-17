@@ -331,6 +331,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 if len(projectId) <= 0:
                     raise Exception("Please enter the Escape Technology Console project ID.")
 
+                # project
                 http = httplib2.Http(disable_ssl_certificate_validation=True)
 
                 headers = {
@@ -350,8 +351,46 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                         "Problems getting project. %s %s" % (response["status"], response)
                     )
 
-                serviceId = string.replace(data["service"], "/services/", "")
-                regionId = string.replace(data["region"], "/regions/", "")
+                if len(data["regions"]) != 1:
+                    raise Exception(
+                        "Unexpected number of regions found: %s" % (len(data["regions"]))
+                    )
+
+                regionId = string.replace(data["regions"][0], "/regions/", "")
+
+                if len(data["providers"]) != 1:
+                    raise Exception(
+                        "Unexpected number of providers found: %s" % (len(data["providers"]))
+                    )
+
+                providerId = string.replace(data["providers"][0], "/providers/", "")
+
+                # service
+                http = httplib2.Http(disable_ssl_certificate_validation=True)
+
+                headers = {
+                    "Authorization": "Bearer "+self.token
+                }
+
+                (response, response_body) = http.request(
+                    self.endpoint+"/services?key=node&provider[]="+providerId,
+                    method="GET",
+                    headers=headers
+                )
+
+                data = json.loads(response_body)
+
+                if response["status"] != "200":
+                    raise Exception(
+                        "Problems getting service. %s %s" % (response["status"], response)
+                    )
+
+                if len(data["hydra:member"]) != 1:
+                    raise Exception(
+                        "Unexpected number of services found: %s" % (len(data["hydra:member"]))
+                    )
+
+                serviceId = data["hydra:member"][0]["id"]
 
                 r = lambda: random.randint(0, 255)
 
