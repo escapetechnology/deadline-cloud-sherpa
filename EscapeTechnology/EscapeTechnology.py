@@ -139,6 +139,11 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                         "Problems getting project. %s %s" % (response["status"], response)
                     )
 
+                if len(data["regions"]) != 1:
+                    raise Exception(
+                        "Unexpected number of regions found: %s" % (len(data["regions"]))
+                    )
+
                 regionId = string.replace(data["regions"][0], "/regions/", "")
 
                 headers = {
@@ -200,6 +205,11 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 if response["status"] != "200":
                     raise Exception(
                         "Problems getting project. %s %s" % (response["status"], response)
+                    )
+
+                if len(data["regions"]) != 1:
+                    raise Exception(
+                        "Unexpected number of regions found: %s" % (len(data["regions"]))
                     )
 
                 regionId = string.replace(data["regions"][0], "/regions/", "")
