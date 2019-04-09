@@ -151,7 +151,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 }
 
                 (response, response_body) = http.request(
-                    self.endpoint+"/sizes?key=node&region="+regionId, # only return sizes related to project's region
+                    self.endpoint+"/sizes?@type=NodeSize&region="+regionId, # only return sizes related to project's region
                     method="GET",
                     headers=headers
                 )
@@ -219,7 +219,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 }
 
                 (response, response_body) = http.request(
-                    self.endpoint+"/images?key=node&region="+regionId, # only return images related to project's region
+                    self.endpoint+"/images?@type=NodeImage&region="+regionId, # only return images related to project's region
                     method="GET",
                     headers=headers
                 )
@@ -383,7 +383,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 }
 
                 (response, response_body) = http.request(
-                    self.endpoint+"/services?key=node&provider[]="+providerId,
+                    self.endpoint+"/services?@type=NodeService&provider[]="+providerId, # only return services related to provider(s)
                     method="GET",
                     headers=headers
                 )
