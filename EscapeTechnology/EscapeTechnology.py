@@ -263,7 +263,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                 }
 
                 (response, response_body) = http.request(
-                    self.endpoint+"/nodes?project="+projectId,
+                    self.endpoint+"/nodes?project="+projectId+"&pagination=false",
                     method="GET",
                     headers=headers
                 )
