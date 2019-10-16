@@ -405,50 +405,59 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 r = lambda: random.randint(0, 255)
 
+                nodes = []
+
                 for i in range(count):
                     # use a name with random 3byte hex value
                     name = self.GetConfigEntryWithDefault("InstanceName", "DL-ETC")
                     name = name + "-" + ("%02X%02X%02X" % (r(), r(), r()))
                     name = name.lower()
 
-                    headers = {
-                        "Authorization": "Bearer "+self.token,
-                        "Content-Type": "application/ld+json",
-                        "Accept": "application/ld+json"
-                    }
-
-                    body = {
+                    nodes.append({
                         "name": name,
                         "description": "",
-                        "project": "/projects/"+projectId,
                         "service": "/services/"+serviceId,
                         "region": "/regions/"+regionId,
                         "image": "/images/"+imageId,
                         "size": "/sizes/"+sizeId,
                         "volumeSize": volumeSize,
-                    }
+                    })
 
-                    (response, response_body) = http.request(
-                        self.endpoint+"/nodes",
-                        method="POST",
-                        headers=headers,
-                        body=json.dumps(body)
+                (response, response_body) = http.request(
+                    self.endpoint+"/projects/"+projectId+"/nodes",
+                    method="POST",
+                    headers={
+                        "Authorization": "Bearer "+self.token,
+                        "Content-Type": "application/ld+json",
+                        "Accept": "application/ld+json"
+                    },
+                    body=json.dumps({
+                        "nodes": nodes
+                    })
+                )
+
+                if response["status"] != "201":
+                    raise Exception(
+                        "Problems creating instances. %s %s" % (response["status"], response)
                     )
 
-                    if response["status"] != "201":
-                        raise Exception(
-                            "Problems creating instances. %s %s" % (response["status"], response)
-                        )
+                response = json.loads(response_body)
 
-                    data = json.loads(response_body)
+                key = "nodes"
 
+                if key not in response:
+                    raise Exception(
+                        "Problems creating instances: unexpected response. %s" % (response)
+                    )
+
+                for node in response[key]:
                     i = CloudInstance()
 
-                    i.ID = data["id"]
-                    i.Name = data["name"]
+                    i.ID = node["id"]
+                    i.Name = node["name"]
                     i.Hostname = ""
-                    i.HardwareID = string.replace(data["size"], "/sizes/", "")
-                    i.ImageID = string.replace(data["image"], "/images/", "")
+                    i.HardwareID = string.replace(node["size"], "/sizes/", "")
+                    i.ImageID = string.replace(node["image"], "/images/", "")
 
                     instances.append(i)
         except:
