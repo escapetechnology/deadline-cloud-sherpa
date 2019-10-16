@@ -436,30 +436,35 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                     })
                 )
 
-                if response["status"] != "201":
-                    raise Exception(
-                        "Problems creating instances. %s %s" % (response["status"], response)
-                    )
+                data = json.loads(response_body)
 
-                response = json.loads(response_body)
+                if response["status"] == "201":
+                    key = "nodes"
 
-                key = "nodes"
+                    if key not in data:
+                        raise Exception(
+                            "Problems creating instances: unexpected response. %s" % (response)
+                        )
 
-                if key not in response:
-                    raise Exception(
-                        "Problems creating instances: unexpected response. %s" % (response)
-                    )
+                    for node in data[key]:
+                        i = CloudInstance()
 
-                for node in response[key]:
-                    i = CloudInstance()
+                        i.ID = node["id"]
+                        i.Name = node["name"]
+                        i.Hostname = ""
+                        i.HardwareID = string.replace(node["size"], "/sizes/", "")
+                        i.ImageID = string.replace(node["image"], "/images/", "")
 
-                    i.ID = node["id"]
-                    i.Name = node["name"]
-                    i.Hostname = ""
-                    i.HardwareID = string.replace(node["size"], "/sizes/", "")
-                    i.ImageID = string.replace(node["image"], "/images/", "")
+                        instances.append(i)
+                else:
+                    key = "hydra:description"
 
-                    instances.append(i)
+                    if response["status"] == "400" and key in data:
+                        ClientUtils.LogText("Problems creating instances: bad request. %s" % (data[key]))
+                    else:
+                        raise Exception(
+                            "Problems creating instances: unhandled response. %s %s" % (response["status"], response)
+                        )
         except:
             ClientUtils.LogText(traceback.format_exc())
         finally:
