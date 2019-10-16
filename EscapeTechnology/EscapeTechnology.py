@@ -336,12 +336,13 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
         try:
             if self.token != None:
+                volumeSize = self.GetIntegerConfigEntryWithDefault("VolumeSize", 32)
+
                 projectId = self.GetConfigEntryWithDefault("ProjectId", "")
 
                 if len(projectId) <= 0:
                     raise Exception("Please enter the Escape Technology Console project ID.")
 
-                # project
                 http = httplib2.Http(disable_ssl_certificate_validation=True)
 
                 headers = {
@@ -424,6 +425,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                         "region": "/regions/"+regionId,
                         "image": "/images/"+imageId,
                         "size": "/sizes/"+sizeId,
+                        "volumeSize": volumeSize,
                     }
 
                     (response, response_body) = http.request(

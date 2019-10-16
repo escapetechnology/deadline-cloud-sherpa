@@ -43,3 +43,14 @@ Index=1
 Label=Instance name
 Default=DL-ETC
 Description=The name of the instances that will be created. FYI: The plugin will add some random hex values on the end to name each one of them uniquely.
+
+[VolumeSize]
+Type=integer
+Minimum=32
+Maximum=10000
+Category=Nodes
+CategoryOrder=3
+Index=1
+Label=Volume size (in GB)
+Default=32
+Description=The volume size for the instances that will be created, in GB.
