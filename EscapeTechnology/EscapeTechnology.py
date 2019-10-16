@@ -86,7 +86,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 if response["status"] not in ["200", "201"]:
                     raise Exception(
-                        "Problems getting a token. %s %s" % (response["status"], response)
+                        "Problems getting a token. [%s] %s" % (response["status"], response)
                     )
 
                 data = json.loads(response_body)
@@ -136,7 +136,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 if response["status"] != "200":
                     raise Exception(
-                        "Problems getting project. %s %s" % (response["status"], response)
+                        "Problems getting project. [%s] %s" % (response["status"], response)
                     )
 
                 if len(data["regions"]) != 1:
@@ -161,7 +161,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 if response["status"] != "200":
                     raise Exception(
-                        "Problems getting list of sizes. %s %s" % (response["status"], response)
+                        "Problems getting list of sizes. [%s] %s" % (response["status"], response)
                     )
 
                 for member in members:
@@ -204,7 +204,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 if response["status"] != "200":
                     raise Exception(
-                        "Problems getting project. %s %s" % (response["status"], response)
+                        "Problems getting project. [%s] %s" % (response["status"], response)
                     )
 
                 if len(data["regions"]) != 1:
@@ -229,7 +229,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 if response["status"] != "200":
                     raise Exception(
-                        "Problems getting list of sizes. %s %s" % (response["status"], response)
+                        "Problems getting list of sizes. [%s] %s" % (response["status"], response)
                     )
 
                 for member in members:
@@ -273,7 +273,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 if response["status"] != "200":
                     raise Exception(
-                        "Problems retrieving instances. %s %s" % (response["status"], response)
+                        "Problems retrieving instances. [%s] %s" % (response["status"], response)
                     )
 
                 for member in members:
@@ -359,7 +359,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 if response["status"] != "200":
                     raise Exception(
-                        "Problems getting project. %s %s" % (response["status"], response)
+                        "Problems getting project. [%s] %s" % (response["status"], response)
                     )
 
                 if len(data["regions"]) != 1:
@@ -393,7 +393,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 if response["status"] != "200":
                     raise Exception(
-                        "Problems getting service. %s %s" % (response["status"], response)
+                        "Problems getting service. [%s] %s" % (response["status"], response)
                     )
 
                 if len(data["hydra:member"]) != 1:
@@ -443,7 +443,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                     if key not in data:
                         raise Exception(
-                            "Problems creating instances: unexpected response. %s" % (response)
+                            "Problems creating instances: unexpected response. [%s] %s" % (response["status"], response)
                         )
 
                     for node in data[key]:
@@ -460,10 +460,10 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                     key = "hydra:description"
 
                     if response["status"] == "400" and key in data:
-                        ClientUtils.LogText("Problems creating instances: bad request. %s" % (data[key]))
+                        ClientUtils.LogText("Problems creating instances: %s. [%s]" % (data[key]), response["status"])
                     else:
                         raise Exception(
-                            "Problems creating instances: unhandled response. %s %s" % (response["status"], response)
+                            "Problems creating instances: unhandled response. [%s] %s" % (response["status"], response)
                         )
         except:
             ClientUtils.LogText(traceback.format_exc())
@@ -504,7 +504,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                     results[i] = True
                 else:
                     ClientUtils.LogText(
-                        "Problems deleting instance with ID: %s. %s %s" % (instanceId, response["status"], response)
+                        "Problems deleting instance with ID: %s. [%s] %s" % (instanceId, response["status"], response)
                     )
         except:
             ClientUtils.LogText(traceback.format_exc())
@@ -552,7 +552,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                     results[i] = True
                 else:
                     ClientUtils.LogText(
-                        "Problems stopping instance with ID: %s. %s %s" % (instanceId, response["status"], response)
+                        "Problems stopping instance with ID: %s. [%s] %s" % (instanceId, response["status"], response)
                     )
         except:
             ClientUtils.LogText(traceback.format_exc())
@@ -600,7 +600,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
                     results[i] = True
                 else:
                     ClientUtils.LogText(
-                        "Problems starting instance with ID: %s. %s %s" % (instanceId, response["status"], response)
+                        "Problems starting instance with ID: %s. [%s] %s" % (instanceId, response["status"], response)
                     )
         except:
             ClientUtils.LogText(traceback.format_exc())
