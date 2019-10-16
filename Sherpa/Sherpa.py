@@ -13,12 +13,12 @@ from System.IO import *
 from System import *
 
 def GetCloudPluginWrapper():
-    return EscapeTechnologyConsolePlugin()
+    return SherpaPlugin()
 
 def CleanupCloudPlugin(cloudPlugin):
     cloudPlugin.Cleanup()
 
-class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
+class SherpaPlugin(CloudPluginWrapper):
     def __init__(self):
         self.endpoint = None
         self.token = None
@@ -409,7 +409,7 @@ class EscapeTechnologyConsolePlugin(CloudPluginWrapper):
 
                 for i in range(count):
                     # use a name with random 3byte hex value
-                    name = self.GetConfigEntryWithDefault("InstanceName", "DL-ETC")
+                    name = self.GetConfigEntryWithDefault("InstanceName", "DL-SHERPA")
                     name = name + "-" + ("%02X%02X%02X" % (r(), r(), r()))
                     name = name.lower()
 

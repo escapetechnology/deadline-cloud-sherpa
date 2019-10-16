@@ -1,1 +1,1 @@
-# Deadline ETC Cloud plugin
+# Deadline Sherpa Cloud plugin

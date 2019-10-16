@@ -5,7 +5,7 @@ CategoryOrder=1
 Index=0
 Label=API key
 Default=
-Description=Your Escape Technology Console API key.
+Description=Your Sherpa API key.
 
 [APISecret]
 Type=password
@@ -14,7 +14,7 @@ CategoryOrder=1
 Index=1
 Label=API secret
 Default=
-Description=Your Escape Technology Console API secret.
+Description=Your Sherpa API secret.
 
 [APIEndpoint]
 Type=string
@@ -23,7 +23,7 @@ CategoryOrder=1
 Index=3
 Label=API endpoint
 Default=https://console-api.escape-technology.com
-Description=The Escape Technology Console API endpoint, no need to touch this unless specifically instructed to do so by Escape Technology.
+Description=The Sherpa API endpoint, no need to touch this unless specifically instructed to do so by Sherpa support.
 
 [ProjectId]
 Type=string
@@ -32,7 +32,7 @@ CategoryOrder=2
 Index=0
 Label=Project ID
 Default=
-Description=The specific Project ID shown on the Escape Technology Console.
+Description=Your Sherpa project ID.
 
 [InstanceName]
 Type=string
@@ -41,7 +41,7 @@ Category=Project
 CategoryOrder=2
 Index=1
 Label=Instance name
-Default=DL-ETC
+Default=DL-SHERPA
 Description=The name of the instances that will be created. FYI: The plugin will add some random hex values on the end to name each one of them uniquely.
 
 [VolumeSize]
