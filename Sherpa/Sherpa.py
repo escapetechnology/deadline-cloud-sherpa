@@ -51,17 +51,17 @@ class SherpaPlugin(CloudPluginWrapper):
             key = self.GetConfigEntryWithDefault("APIKey", "")
 
             if len(key) <= 0:
-                raise Exception("Please enter your Escape Technology Console API key.")
+                raise Exception("Please enter your Sherpa API key.")
 
             secret = self.GetConfigEntryWithDefault("APISecret", "")
 
             if len(secret) <= 0:
-                raise Exception("Please enter your Escape Technology Console API secret.")
+                raise Exception("Please enter your Sherpa API secret.")
 
             endpoint = self.GetConfigEntryWithDefault("APIEndpoint", "")
 
             if len(endpoint) <= 0:
-                raise Exception("Please enter the Escape Technology Console API endpoint.")
+                raise Exception("Please enter the Sherpa API endpoint.")
 
             self.endpoint = endpoint
 
@@ -103,7 +103,7 @@ class SherpaPlugin(CloudPluginWrapper):
             ok = True
         else:
             ok = False
-            raise Exception("Error: invalid Escape Technology Console credentials. " \
+            raise Exception("Error: invalid Sherpa credentials. " \
                 "Please ensure the correct API key and API secret have been entered.")
 
         return ok
@@ -118,7 +118,7 @@ class SherpaPlugin(CloudPluginWrapper):
                 projectId = self.GetConfigEntryWithDefault("ProjectId", "")
 
                 if len(projectId) <= 0:
-                    raise Exception("Please enter the Escape Technology Console project ID.")
+                    raise Exception("Please enter the Sherpa project ID.")
 
                 http = httplib2.Http(disable_ssl_certificate_validation=True)
 
@@ -186,7 +186,7 @@ class SherpaPlugin(CloudPluginWrapper):
                 projectId = self.GetConfigEntryWithDefault("ProjectId", "")
 
                 if len(projectId) <= 0:
-                    raise Exception("Please enter the Escape Technology Console project ID.")
+                    raise Exception("Please enter the Sherpa project ID.")
 
                 http = httplib2.Http(disable_ssl_certificate_validation=True)
 
@@ -254,7 +254,7 @@ class SherpaPlugin(CloudPluginWrapper):
                 projectId = self.GetConfigEntryWithDefault("ProjectId", "")
 
                 if len(projectId) <= 0:
-                    raise Exception("Please enter the Escape Technology Console project ID.")
+                    raise Exception("Please enter the Sherpa project ID.")
 
                 http = httplib2.Http(disable_ssl_certificate_validation=True)
 
@@ -314,7 +314,7 @@ class SherpaPlugin(CloudPluginWrapper):
 
                     instance.ID = member["id"]
                     instance.Name = member["name"]
-                    instance.Provider = "Escape Technology Console"
+                    instance.Provider = "Sherpa"
                     instance.Status = state
                     instance.Hostname = ""
                     instance.PublicIP = ""
@@ -341,7 +341,7 @@ class SherpaPlugin(CloudPluginWrapper):
                 projectId = self.GetConfigEntryWithDefault("ProjectId", "")
 
                 if len(projectId) <= 0:
-                    raise Exception("Please enter the Escape Technology Console project ID.")
+                    raise Exception("Please enter the Sherpa project ID.")
 
                 http = httplib2.Http(disable_ssl_certificate_validation=True)
 
@@ -483,7 +483,7 @@ class SherpaPlugin(CloudPluginWrapper):
             projectId = self.GetConfigEntryWithDefault("ProjectId", "")
 
             if len(projectId.strip()) <= 0:
-                raise Exception("Please enter the Escape Technology Console project ID.")
+                raise Exception("Please enter the Sherpa project ID.")
 
             for i in range(0, count):
                 instanceId = instanceIds[i]
@@ -524,7 +524,7 @@ class SherpaPlugin(CloudPluginWrapper):
             projectId = self.GetConfigEntryWithDefault("ProjectId", "")
 
             if len(projectId.strip()) <= 0:
-                raise Exception("Please enter the Escape Technology Console project ID.")
+                raise Exception("Please enter the Sherpa project ID.")
 
             for i in range(0, count):
                 instanceId = instanceIds[i]
@@ -572,7 +572,7 @@ class SherpaPlugin(CloudPluginWrapper):
             projectId = self.GetConfigEntryWithDefault("ProjectId", "")
 
             if len(projectId.strip()) <= 0:
-                raise Exception("Please enter the Escape Technology Console project ID.")
+                raise Exception("Please enter the Sherpa project ID.")
 
             for i in range(0, count):
                 instanceId = instanceIds[i]
