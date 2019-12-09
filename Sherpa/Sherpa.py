@@ -500,7 +500,7 @@ class SherpaPlugin(CloudPluginWrapper):
                     headers=headers
                 )
 
-                if response["status"] == "204": # "no content"
+                if response["status"] == "204" or response["status"] == "202": # 204 "no content" (immediate, synchronous, deletion), 202 "accepted" (delayed, asynchronous, deletion)
                     results[i] = True
                 else:
                     ClientUtils.LogText(
