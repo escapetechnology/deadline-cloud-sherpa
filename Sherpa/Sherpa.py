@@ -317,8 +317,8 @@ class SherpaPlugin(CloudPluginWrapper):
                     instance.Provider = "Sherpa"
                     instance.Status = state
                     instance.Hostname = ""
-                    instance.PublicIP = ""
-                    instance.PrivateIP = ""
+                    instance.PublicIP = member["publicIP"]
+                    instance.PrivateIP = member["privateIP"]
                     instance.HardwareID = string.replace(member["size"], "/sizes/", "")
                     instance.ImageID = string.replace(member["image"], "/images/", "")
                     instance.Zone = ""
