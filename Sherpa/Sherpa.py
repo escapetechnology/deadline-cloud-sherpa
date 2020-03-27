@@ -219,7 +219,7 @@ class SherpaPlugin(CloudPluginWrapper):
                 }
 
                 (response, response_body) = http.request(
-                    self.endpoint+"/images?@type=NodeImage&region="+regionId+"&pagination=false", # only return images related to project's region
+                    self.endpoint+"/images?@type[]=NodeImage&@type[]=NodeGoldenImage&region="+regionId+"&pagination=false", # only return images related to project's region
                     method="GET",
                     headers=headers
                 )
