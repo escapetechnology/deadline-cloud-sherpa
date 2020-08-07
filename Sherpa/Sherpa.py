@@ -439,7 +439,7 @@ class SherpaPlugin(CloudPluginWrapper):
                 data = json.loads(response_body)
 
                 if response["status"] == "201":
-                    key = "nodes"
+                    key = "hydra:member"
 
                     if key not in data:
                         raise Exception(
